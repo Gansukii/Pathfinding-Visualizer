@@ -1,0 +1,61 @@
+
+.btn{
+  cursor: pointer;
+}
+
+.nodeContainer {
+  width: 1400px;
+  height: 630px;
+  flex-wrap: wrap;
+  outline: 2px solid black;
+}
+.node {
+  margin: 0;
+  min-width: 35px;
+  height: 35px;
+  /* border-radius: 50%; */
+  border: 1px solid black;
+  display: flex;
+  cursor: pointer;
+  /* transition: 0.5s; */
+  user-select: none;
+}
+
+.node:hover {
+  background-color: aqua;
+}
+
+.start {
+  background-color: #00ff00;
+}
+
+.start:hover {
+  background-color: #00ff00;
+}
+
+.end {
+  background-color: #ff4500;
+}
+
+.end:hover {
+  background-color: #ff4500;
+}
+
+.visited {
+  background-color: aqua;
+}
+
+.path {
+  background-color: #004d4d;
+}
+.path:hover {
+  background-color: #004d4d;
+}
+
+.wall{
+  background-color: black;
+}
+
+.wall:hover {
+  background-color: black;
+}
