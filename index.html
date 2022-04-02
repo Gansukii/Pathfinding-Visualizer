@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pathfinder</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
         integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 
@@ -17,24 +17,43 @@
 
 
         <div class="collapse navbar-collapse ">
-            <div class="col-8 mx-0 w-100 d-flex justify-content-center">
+            <div class="col-12 mx-0 w-100 d-flex justify-content-center">
 
-                <div class="col-2"><button type="button" class="btn btn-dark w-100" id="btnWall" disabled>Add
-                        Wall</button></div>
-                <div class="col-2"><button type="button" class="btn btn-info w-100" id="btnRemoveWall"
-                        disabled>RemoveWall</button>
+                <div class="col-2 py-0">
+                    <div class="form-group my-0">
+                        <label for="algo">Select Algorithm</label>
+                        <select class="form-control" id="algo">
+                            <option value="di" selected>Dijkstra's Algorithm</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option value="bf">Breadth First Search</option>
+                            <option>5</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-2"><button type="button" class="btn btn-danger w-100" id="btnClear">Clear
-                    </button></div>
-                <div class="col-2"><button type="button" class="btn btn-primary w-100" id="btnStart"
-                        disabled>Start!</button></div>
+
+                <div class="col-2 d-flex flex-column justify-content-around">
+
+                    <button type="button" class="btn  p-0 w-100" id="btnWall" disabled>Add Wall</button>
+                    <button type="button" class="btn  p-0 w-100" id="btnRemoveWall" disabled>Remove Wall</button>
+                </div>
+
+                <div class="col-2  d-flex flex-column justify-content-around">
+                    <button type="button" class="btn p-0 btn-danger w-100" id="btnClear">Clear</button>
+                    <button type="button" class="btn p-0 btn-primary w-100" id="btnStart" disabled>Start!</button>
+
+                </div>
+
+
             </div>
         </div>
     </nav>
+    <div class="mt-4 text-center w-100 txtInfo" id="txtInfo">Select a <b id="txtSelect">start node</b></div>
+    <div class="mt-4 text-center w-100 txtInfo d-none" id="txtPost">Start and end nodes are now draggable to see the
+        shortest
+        path instantly.</div>
 
-
-
-    <div class="mt-5 d-flex p-0 justify-content-center mx-auto nodeContainer " id="nodeContainer">
+    <div class="mt-2 mb-4 d-flex p-0 justify-content-center mx-auto nodeContainer " id="nodeContainer">
 
     </div>
     <!-- <div><button type="button" class="btn btn-danger" id="btnClear">Clear selections</button></div> -->

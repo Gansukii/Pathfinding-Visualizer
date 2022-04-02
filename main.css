@@ -3,21 +3,39 @@
   cursor: pointer;
 }
 
+.btn:hover{
+  box-shadow: 0px 1px 8px 0px rgba(0,0,0,0.75);
+-webkit-box-shadow: 0px 1px 8px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 1px 8px 0px rgba(0,0,0,0.75);
+}
+
+#btnWall{
+  background-color: #000;
+  color: #fff;
+}
+
+#btnRemoveWall{
+  border: 1px solid #000;
+}
+
+.txtInfo{
+ font-size: 20px;
+}
+
 .nodeContainer {
   width: 1400px;
   height: 630px;
   flex-wrap: wrap;
-  outline: 2px solid black;
+  outline: 2px solid #000;
 }
 .node {
   margin: 0;
   min-width: 35px;
   height: 35px;
-  /* border-radius: 50%; */
-  border: 1px solid black;
+  border: 1px solid #000;
   display: flex;
   cursor: pointer;
-  /* transition: 0.5s; */
+  transition: 0.2s;
   user-select: none;
 }
 
@@ -46,16 +64,16 @@
 }
 
 .path {
-  background-color: #004d4d;
+  background-color: #029090;
 }
 .path:hover {
-  background-color: #004d4d;
+  background-color: #029090;
 }
 
 .wall{
-  background-color: black;
+  background-color:#000;
 }
 
 .wall:hover {
-  background-color: black;
+  background-color: #000;
 }

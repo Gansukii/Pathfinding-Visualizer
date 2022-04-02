@@ -1,8 +1,12 @@
 const nodeContainer = document.getElementById("nodeContainer");
+const algo = document.getElementById("algo");
 const btnClear = document.getElementById("btnClear");
 const btnStart = document.getElementById("btnStart");
 const btnWall = document.getElementById("btnWall");
 const btnRemoveWall = document.getElementById("btnRemoveWall");
+const txtInfo = document.getElementById("txtInfo");
+const txtPost = document.getElementById("txtPost");
+const txtSelect = document.getElementById("txtSelect");
 let isWall = false;
 let isRemoveWall = false;
 let isMouseDown = false;
@@ -14,8 +18,8 @@ let isNoPath = false;
 let startNode = document.createElement("div");
 let endNode = document.createElement("div");
 let nodesArr = [];
-let visitedArr = [];
 let path = [];
+let pathArr = [];
 
 const createNode = (row, col) => {
   const div = document.createElement("div");
@@ -26,9 +30,11 @@ const createNode = (row, col) => {
     if (!startSelected) {
       startNode = div;
       div.classList.add("start");
+      txtSelect.textContent = "end node";
       startSelected = true;
       lastSelected = false;
     } else if (!lastSelected && startSelected) {
+      txtInfo.classList.add("d-none");
       div.classList.add("end");
       endNode = div;
       btnStart.removeAttribute("disabled");
@@ -77,60 +83,27 @@ const startProgram = () => {
   }
 };
 
+/* ##########################################################################################################################
+                                                              MAIN ALGO
+  ###########################################################################################################################
+*/
+
+/*########################################################## BREADTH FIRST  #################################################################*/
 const startBF = () => {
+  let visitedArr = [];
+  let loopCount = [];
+  visited = {};
+  // let prevNode = startNode.getAttribute("coord");
+
   let [row, column] = startNode.getAttribute("coord").split(",");
-  visitedArr = [];
+
   let pathQueue = [];
-  pathQueue.push(startNode.getAttribute("coord"));
-
-  while (0) {
-    const currentCoord = pathQueue.shift();
-    [row, column] = currentCoord.split(",");
-    const node = nodesArr[row][column];
-
-    if (endNode == node) return node;
-    if (visitedArr.includes(node.getAttribute("coord"))) continue;
-
-    visitedArr.push(currentCoord);
-
-    if (startNode !== node) {
-      node.classList.add("visited");
-    }
-
-    pathQueue.push(startNode.getAttribute("coord"));
-
-    let [top, bottom, left, right] = [null, null, null, null];
-
-    if (row > 0) {
-      top = parseInt(row) - 1 + "," + column;
-    }
-    if (row < 14) {
-      bottom = parseInt(row) + 1 + "," + column;
-    }
-    if (column > 0) {
-      left = row + "," + (parseInt(column) - 1);
-    }
-    if (column < 19) {
-      right = row + "," + (parseInt(column) + 1);
-    }
-
-    if (top !== null && !visitedArr.includes(top)) {
-      pathQueue.push(top);
-    }
-    if (bottom !== null && !visitedArr.includes(bottom)) {
-      pathQueue.push(bottom);
-    }
-    if (left !== null && !visitedArr.includes(left)) {
-      pathQueue.push(left);
-    }
-    if (right !== null && !visitedArr.includes(right)) {
-      pathQueue.push(right);
-    }
-  }
+  let finalCount = 0;
+  pathQueue.push([startNode.getAttribute("coord"), 0]);
 
   const iter = () => {
     setTimeout(() => {
-      const currentCoord = pathQueue.shift();
+      const [currentCoord, count] = pathQueue.shift();
       [row, column] = currentCoord.split(",");
       const node = nodesArr[row][column];
 
@@ -141,57 +114,162 @@ const startBF = () => {
         }
 
         visitedArr.push(currentCoord);
+        loopCount.push([currentCoord, count]);
+        // prevNode = currentCoord;
 
         if (startNode !== node) {
           node.classList.add("visited");
+          visited[node.getAttribute("coord")] = {};
         }
-        pathQueue.push(startNode.getAttribute("coord"));
+        // pathQueue.push(startNode.getAttribute("coord"));
 
         let [top, bottom, left, right] = [null, null, null, null];
 
         if (row > 0) {
           top = parseInt(row) - 1 + "," + column;
         }
-        if (row < 14) {
+        if (row < 17) {
           bottom = parseInt(row) + 1 + "," + column;
         }
         if (column > 0) {
           left = row + "," + (parseInt(column) - 1);
         }
-        if (column < 19) {
+        if (column < 39) {
           right = row + "," + (parseInt(column) + 1);
         }
 
-        if (top !== null && !visitedArr.includes(top)) {
-          pathQueue.push(top);
+        if (
+          top !== null &&
+          !visitedArr.includes(top) &&
+          !nodesArr[top.split(",")[0]][top.split(",")[1]].classList.contains("wall")
+        ) {
+          pathQueue.push([top, count + 1]);
         }
-        if (right !== null && !visitedArr.includes(right)) {
-          pathQueue.push(right);
+        if (
+          right !== null &&
+          !visitedArr.includes(right) &&
+          !nodesArr[right.split(",")[0]][right.split(",")[1]].classList.contains("wall")
+        ) {
+          pathQueue.push([right, count + 1]);
         }
-        if (bottom !== null && !visitedArr.includes(bottom)) {
-          pathQueue.push(bottom);
+        if (
+          bottom !== null &&
+          !visitedArr.includes(bottom) &&
+          !nodesArr[bottom.split(",")[0]][bottom.split(",")[1]].classList.contains("wall")
+        ) {
+          pathQueue.push([bottom, count + 1]);
         }
-        if (left !== null && !visitedArr.includes(left)) {
-          pathQueue.push(left);
+        if (
+          left !== null &&
+          !visitedArr.includes(left) &&
+          !nodesArr[left.split(",")[0]][left.split(",")[1]].classList.contains("wall")
+        ) {
+          pathQueue.push([left, count + 1]);
+        }
+
+        if (pathQueue.length === 0) {
+          alert("NO PATH TO THE END NODE!");
+          isNoPath = true;
+          isProcessDone = true;
+          postProcess();
+          return;
         }
 
         iter();
       } else {
+        loopCount.push([currentCoord, count]);
+        finalCount = count;
+        pathCheck();
         return;
       }
-    }, 10);
+    }, 1);
   };
 
   iter();
-};
 
-/* ##########################################################################################################################
-                                                              MAIN ALGO
-  ###########################################################################################################################
-*/
-/*
- Assigns the neighbors to the queue
-*/
+  const pathCheck = () => {
+    pathArr = [];
+    loopCount.reverse();
+    let currentNode = loopCount.shift();
+    pathArr.push(currentNode[0]);
+    let minimum = currentNode;
+
+    while (1) {
+      const [row, column] = currentNode[0].split(",");
+      if (currentNode[0] === startNode.getAttribute("coord")) {
+        break;
+      }
+
+      let neighbor = [];
+
+      if (row > 0 && column > 0) {
+        neighbor.push(parseInt(row) - 1 + "," + (parseInt(column) - 1));
+      }
+      if (row > 0 && column < 39) {
+        neighbor.push(parseInt(row) - 1 + "," + (parseInt(column) + 1));
+      }
+      if (row < 17 && column < 39) {
+        neighbor.push(parseInt(row) + 1 + "," + (parseInt(column) + 1));
+      }
+      if (row < 17 && column > 0) {
+        neighbor.push(parseInt(row) + 1 + "," + (parseInt(column) - 1));
+      }
+      if (row > 0) {
+        neighbor.push(parseInt(row) - 1 + "," + column);
+      }
+      if (row < 17) {
+        neighbor.push(parseInt(row) + 1 + "," + column);
+      }
+      if (column > 0) {
+        neighbor.push(row + "," + (parseInt(column) - 1));
+      }
+      if (column < 39) {
+        neighbor.push(row + "," + (parseInt(column) + 1));
+      }
+
+      for (let node of loopCount) {
+        if (node[1] >= finalCount) {
+          continue;
+        }
+        if (finalCount > 2) {
+          if (node[1] >= finalCount - 2) {
+            if (neighbor.includes(node[0])) {
+              if (node[1] < minimum[1]) {
+                minimum = node;
+                if (node[1] === finalCount - 2) {
+                  currentNode = minimum;
+                  finalCount = minimum[1];
+                  pathArr.push(minimum[0]);
+                  break;
+                }
+              }
+            }
+          } else {
+            currentNode = minimum;
+            finalCount = minimum[1];
+            pathArr.push(minimum[0]);
+            break;
+          }
+        } else {
+          if (neighbor.includes(node[0])) {
+            if (node[1] < minimum[1]) {
+              minimum = node;
+              currentNode = minimum;
+              finalCount = minimum[1];
+              pathArr.push(minimum[0]);
+              break;
+            }
+          }
+        }
+      }
+    }
+    pathArr.reverse();
+    drawPath(pathArr[0]);
+  };
+};
+/*########################################################## DIJKSTRA'S ALGO  #################################################################*/
+
+/*Assigns the neighbors to the queue*/
 const assignToQ = (neighbor, current, cost, pathQueue) => {
   if (neighbor in visited) {
     return;
@@ -218,7 +296,6 @@ const assignToQ = (neighbor, current, cost, pathQueue) => {
 
 const startDijkstra = () => {
   isProcessDone = false;
-  // let [row, column] = startNode.getAttribute("coord").split(",");
   let pathQueue = {};
   const startObj = {
     gCost: 0,
@@ -236,7 +313,7 @@ const startDijkstra = () => {
 
       if (nodesArr[row][column] === endNode) {
         visited[lowestCostKey] = current;
-        drawPath();
+        revPath();
         return;
       } else {
         if (nodesArr[row][column] !== startNode) {
@@ -285,7 +362,6 @@ const startDijkstra = () => {
           isNoPath = true;
           isProcessDone = true;
           postProcess();
-
           return;
         }
 
@@ -296,25 +372,59 @@ const startDijkstra = () => {
 
   let currentCoord = endNode.getAttribute("coord");
 
-  const drawPath = () => {
-    setTimeout(() => {
-      const [row, column] = currentCoord.split(",");
-      const currentNode = nodesArr[row][column];
+  const revPath = () => {
+    while (1) {
+      pathArr.push(currentCoord);
 
-      if (currentNode !== startNode) {
-        if (currentNode !== startNode && currentNode !== endNode) {
-          currentNode.classList.add("path");
-          path.push(currentNode);
-        }
-
-        currentCoord = visited[currentCoord].from;
-        drawPath();
-      } else {
-        isProcessDone = true;
-        postProcess();
+      if (currentCoord === startNode.getAttribute("coord")) {
+        pathArr.reverse();
+        console.log(pathArr);
+        drawPath(currentCoord);
+        break;
       }
-    }, 20);
+      currentCoord = visited[currentCoord].from;
+    }
   };
+
+  // const drawPath = () => {
+  //   setTimeout(() => {
+  //     const [row, column] = currentCoord.split(",");
+  //     const currentNode = nodesArr[row][column];
+
+  //     if (currentNode !== startNode) {
+  //       if (currentNode !== startNode && currentNode !== endNode) {
+  //         currentNode.classList.add("path");
+  //         path.push(currentNode);
+  //       }
+
+  //       currentCoord = visited[currentCoord].from;
+  //       drawPath();
+  //     } else {
+  //       isProcessDone = true;
+  //       postProcess();
+  //     }
+  //   }, 20);
+  // };
+
+  // const drawPath = () => {
+  //   setTimeout(() => {
+  //     const [row, column] = pathArr.shift().split(",");
+  //     const currentNode = nodesArr[row][column];
+
+  //     if (currentNode !== endNode) {
+  //       if (currentNode !== startNode && currentNode !== endNode) {
+  //         currentNode.classList.add("path");
+  //         path.push(currentNode);
+  //       }
+
+  //       currentCoord = visited[currentCoord].from;
+  //       drawPath();
+  //     } else {
+  //       isProcessDone = true;
+  //       postProcess();
+  //     }
+  //   }, 20);
+  // };
 
   mainOperation();
 
@@ -324,8 +434,29 @@ const startDijkstra = () => {
   }
 };
 
+const drawPath = (currentCoord) => {
+  setTimeout(() => {
+    const [row, column] = pathArr.shift().split(",");
+    const currentNode = nodesArr[row][column];
+
+    if (currentNode !== endNode) {
+      if (currentNode !== startNode && currentNode !== endNode) {
+        currentNode.classList.add("path");
+        path.push(currentNode);
+      }
+
+      // currentCoord = visited[currentCoord].from;
+      drawPath(currentCoord);
+    } else {
+      isProcessDone = true;
+      postProcess();
+    }
+  }, 20);
+};
+
 /* #############################################################
   Onclick functions 
+  #############################################################
 */
 
 btnStart.onclick = () => {
@@ -337,7 +468,21 @@ btnStart.onclick = () => {
   btnWall.setAttribute("disabled", "");
   btnRemoveWall.setAttribute("disabled", "");
   btnClear.setAttribute("disabled", "");
-  const end = startDijkstra();
+
+  switch (algo.value) {
+    case "di": {
+      startDijkstra();
+      break;
+    }
+    case "bf": {
+      startBF();
+      break;
+    }
+
+    default: {
+      break;
+    }
+  }
 };
 
 btnWall.onclick = () => {
@@ -383,6 +528,9 @@ btnClear.onclick = () => {
   btnWall.textContent = "Add Wall";
   btnRemoveWall.textContent = "Remove Wall";
 
+  txtInfo.classList.remove("d-none");
+  txtPost.classList.add("d-none");
+
   while (nodeContainer.firstChild) {
     nodeContainer.removeChild(nodeContainer.firstChild);
   }
@@ -397,7 +545,26 @@ startProgram();
   ###############################################################################################################################
 */
 
+const getAlgoInstant = () => {
+  switch (algo.value) {
+    case "di": {
+      startInstantDijkstra();
+      break;
+    }
+    case "bf": {
+      startInstantBF();
+      break;
+    }
+
+    default: {
+      break;
+    }
+  }
+};
+
 const postProcess = () => {
+  txtPost.classList.remove("d-none");
+  txtInfo.classList.add("d-none");
   btnWall.removeAttribute("disabled");
   btnRemoveWall.removeAttribute("disabled");
   btnClear.removeAttribute("disabled");
@@ -442,7 +609,7 @@ const postProcess = () => {
           startNode.classList.remove("start");
           startNode = node;
           startNode.classList.add("start");
-          startInstantDijkstra();
+          getAlgoInstant();
         }
       }
 
@@ -452,7 +619,7 @@ const postProcess = () => {
           endNode.classList.remove("end");
           endNode = node;
           endNode.classList.add("end");
-          startInstantDijkstra();
+          getAlgoInstant();
         }
       }
       if (isMouseDown && isWall && node !== startNode && node !== endNode) {
@@ -564,5 +731,195 @@ const startInstantDijkstra = () => {
       currentNode.classList.add("path");
     }
     currentCoord = visited[currentCoord].from;
+  }
+};
+
+const startInstantBF = () => {
+  for (let coord in visited) {
+    const [row, column] = coord.split(",");
+    nodesArr[row][column].classList.remove("visited");
+  }
+
+  for (let node of path) {
+    node.classList.remove("path");
+  }
+
+  isProcessDone = false;
+  let visitedArr = [];
+  let loopCount = [];
+  visited = {};
+  // let prevNode = startNode.getAttribute("coord");
+
+  let [row, column] = startNode.getAttribute("coord").split(",");
+
+  let pathQueue = [];
+  let finalCount = 0;
+  pathQueue.push([startNode.getAttribute("coord"), 0]);
+
+  while (1) {
+    const [currentCoord, count] = pathQueue.shift();
+    [row, column] = currentCoord.split(",");
+    const node = nodesArr[row][column];
+
+    if (endNode === node) {
+      loopCount.push([currentCoord, count]);
+      finalCount = count;
+      break;
+    }
+    if (visitedArr.includes(node.getAttribute("coord"))) continue;
+
+    visitedArr.push(currentCoord);
+    loopCount.push([currentCoord, count]);
+
+    if (startNode !== node) {
+      node.classList.add("visited");
+      visited[node.getAttribute("coord")] = {};
+    }
+
+    // pathQueue.push(startNode.getAttribute("coord"));
+
+    let [top, bottom, left, right] = [null, null, null, null];
+
+    if (row > 0) {
+      top = parseInt(row) - 1 + "," + column;
+    }
+    if (row < 17) {
+      bottom = parseInt(row) + 1 + "," + column;
+    }
+    if (column > 0) {
+      left = row + "," + (parseInt(column) - 1);
+    }
+    if (column < 39) {
+      right = row + "," + (parseInt(column) + 1);
+    }
+
+    if (top !== null && !visitedArr.includes(top) && !nodesArr[top.split(",")[0]][top.split(",")[1]].classList.contains("wall")) {
+      pathQueue.push([top, count + 1]);
+    }
+    if (
+      right !== null &&
+      !visitedArr.includes(right) &&
+      !nodesArr[right.split(",")[0]][right.split(",")[1]].classList.contains("wall")
+    ) {
+      pathQueue.push([right, count + 1]);
+    }
+    if (
+      bottom !== null &&
+      !visitedArr.includes(bottom) &&
+      !nodesArr[bottom.split(",")[0]][bottom.split(",")[1]].classList.contains("wall")
+    ) {
+      pathQueue.push([bottom, count + 1]);
+    }
+    if (
+      left !== null &&
+      !visitedArr.includes(left) &&
+      !nodesArr[left.split(",")[0]][left.split(",")[1]].classList.contains("wall")
+    ) {
+      pathQueue.push([left, count + 1]);
+    }
+
+    if (pathQueue.length === 0) {
+      alert("NO PATH TO THE END NODE!");
+      isNoPath = true;
+      isProcessDone = true;
+      break;
+    }
+  }
+
+  if (isNoPath) {
+    isNoPath = false;
+    return;
+  }
+
+  pathArr = [];
+  loopCount.reverse();
+  let currentNode = loopCount.shift();
+  pathArr.push(currentNode[0]);
+  let minimum = currentNode;
+
+  while (1) {
+    const [row, column] = currentNode[0].split(",");
+    if (currentNode[0] === startNode.getAttribute("coord")) {
+      break;
+    }
+
+    let neighbor = [];
+
+    if (row > 0 && column > 0) {
+      neighbor.push(parseInt(row) - 1 + "," + (parseInt(column) - 1));
+    }
+    if (row > 0 && column < 39) {
+      neighbor.push(parseInt(row) - 1 + "," + (parseInt(column) + 1));
+    }
+    if (row < 17 && column < 39) {
+      neighbor.push(parseInt(row) + 1 + "," + (parseInt(column) + 1));
+    }
+    if (row < 17 && column > 0) {
+      neighbor.push(parseInt(row) + 1 + "," + (parseInt(column) - 1));
+    }
+    if (row > 0) {
+      neighbor.push(parseInt(row) - 1 + "," + column);
+    }
+    if (row < 17) {
+      neighbor.push(parseInt(row) + 1 + "," + column);
+    }
+    if (column > 0) {
+      neighbor.push(row + "," + (parseInt(column) - 1));
+    }
+    if (column < 39) {
+      neighbor.push(row + "," + (parseInt(column) + 1));
+    }
+
+    for (let node of loopCount) {
+      if (node[1] >= finalCount) {
+        continue;
+      }
+      if (finalCount > 2) {
+        if (node[1] >= finalCount - 2) {
+          if (neighbor.includes(node[0])) {
+            if (node[1] < minimum[1]) {
+              minimum = node;
+              if (node[1] === finalCount - 2) {
+                currentNode = minimum;
+                finalCount = minimum[1];
+                pathArr.push(minimum[0]);
+                break;
+              }
+            }
+          }
+        } else {
+          currentNode = minimum;
+          finalCount = minimum[1];
+          pathArr.push(minimum[0]);
+          break;
+        }
+      } else {
+        if (neighbor.includes(node[0])) {
+          if (node[1] < minimum[1]) {
+            minimum = node;
+            currentNode = minimum;
+            finalCount = minimum[1];
+            pathArr.push(minimum[0]);
+            break;
+          }
+        }
+      }
+    }
+  }
+  let currentCoord = pathArr.shift();
+
+  while (1) {
+    const [row, column] = currentCoord.split(",");
+    const currentNode = nodesArr[row][column];
+
+    if (currentNode === startNode) {
+      isProcessDone = true;
+      break;
+    }
+    if (currentNode !== startNode && currentNode !== endNode) {
+      path.push(currentNode);
+      currentNode.classList.add("path");
+    }
+    currentCoord = pathArr.shift();
   }
 };
