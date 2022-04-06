@@ -20,6 +20,7 @@ let endNode = document.createElement("div");
 let nodesArr = [];
 let path = [];
 let pathArr = [];
+let visited = {};
 
 const createNode = (row, col) => {
   const div = document.createElement("div");
@@ -93,7 +94,6 @@ const startBF = () => {
   let visitedArr = [];
   let loopCount = [];
   visited = {};
-  // let prevNode = startNode.getAttribute("coord");
 
   let [row, column] = startNode.getAttribute("coord").split(",");
 
@@ -352,7 +352,7 @@ const startDijkstra = () => {
         delete pathQueue[lowestCostKey];
 
         lowestCostKey = Object.keys(pathQueue)[0];
-        for (i in pathQueue) {
+        for (let i in pathQueue) {
           if (pathQueue[i].gCost < pathQueue[lowestCostKey].gCost) {
             lowestCostKey = i;
           }
@@ -378,7 +378,6 @@ const startDijkstra = () => {
 
       if (currentCoord === startNode.getAttribute("coord")) {
         pathArr.reverse();
-        console.log(pathArr);
         drawPath(currentCoord);
         break;
       }
@@ -434,6 +433,164 @@ const startDijkstra = () => {
   }
 };
 
+/*########################################################## A STAR ALGO  #################################################################*/
+/*Assigns the neighbors to the queue*/
+const starAssignToQ = (neighbor, current, cost, pathQueue) => {
+  const [endRow, endCol] = endNode.getAttribute("coord").split(",");
+  const [startRow, startCol] = neighbor.split(",");
+
+  const hCost = hCostCompute(startRow, startCol, endRow, endCol);
+
+  if (neighbor in visited) {
+    return;
+  }
+  let [row, column] = neighbor.split(",");
+  if (nodesArr[row][column].classList.contains("wall")) {
+    return;
+  }
+  let a = {
+    gCost: current.gCost + cost,
+    coord: neighbor,
+    hCost: hCost,
+    totalCost: 0,
+    computeTotal: function () {
+      this.totalCost = this.gCost + this.hCost;
+    },
+    from: current.coord,
+  };
+  a.computeTotal();
+
+  if (!(neighbor in pathQueue)) {
+    pathQueue[neighbor] = a;
+  } else {
+    if (a.totalCost < pathQueue[neighbor].totalCost) {
+      pathQueue[neighbor].gCost = a.gCost;
+      pathQueue[neighbor].hCost = a.hCost;
+      pathQueue[neighbor].totalCost = a.totalCost;
+      pathQueue[neighbor].from = a.from;
+    }
+  }
+};
+
+const hCostCompute = (startRow, startCol, endRow, endCol) => {
+  return Math.floor(
+    Math.sqrt(
+      Math.pow(Math.abs(parseInt(endRow) - parseInt(startRow)), 2) + Math.pow(Math.abs(parseInt(endCol) - parseInt(startCol)), 2)
+    ) * 10
+  );
+};
+
+const startAStar = () => {
+  const [endRow, endCol] = endNode.getAttribute("coord").split(",");
+  const [startRow, startCol] = startNode.getAttribute("coord").split(",");
+
+  const hCost = hCostCompute(startRow, startCol, endRow, endCol);
+
+  let pathQueue = {};
+  const startObj = {
+    gCost: 0,
+    hCost: hCost,
+    totalCost: 0,
+    computeTotal: function () {
+      this.totalCost = this.gCost + this.hCost;
+    },
+    coord: startNode.getAttribute("coord"),
+    from: startNode.getAttribute("coord"),
+  };
+  startObj.computeTotal();
+
+  pathQueue[startNode.getAttribute("coord")] = startObj;
+  visited = {};
+  let lowestCostKey = startNode.getAttribute("coord");
+
+  const mainOperation = () => {
+    setTimeout(() => {
+      let current = pathQueue[lowestCostKey];
+      let [row, column] = lowestCostKey.split(",");
+
+      if (nodesArr[row][column] === endNode) {
+        visited[lowestCostKey] = current;
+        revPath();
+        return;
+      } else {
+        if (nodesArr[row][column] !== startNode) {
+          nodesArr[row][column].classList.add("visited");
+        }
+
+        /*
+        clockwise checking of neighbor
+       */
+        if (row > 0 && column > 0) {
+          starAssignToQ(parseInt(row) - 1 + "," + (parseInt(column) - 1), current, 14, pathQueue);
+        }
+        if (row > 0) {
+          starAssignToQ(parseInt(row) - 1 + "," + column, current, 10, pathQueue);
+        }
+        if (row > 0 && column < 39) {
+          starAssignToQ(parseInt(row) - 1 + "," + (parseInt(column) + 1), current, 14, pathQueue);
+        }
+        if (column < 39) {
+          starAssignToQ(row + "," + (parseInt(column) + 1), current, 10, pathQueue);
+        }
+        if (row < 17 && column < 39) {
+          starAssignToQ(parseInt(row) + 1 + "," + (parseInt(column) + 1), current, 14, pathQueue);
+        }
+        if (row < 17) {
+          starAssignToQ(parseInt(row) + 1 + "," + column, current, 10, pathQueue);
+        }
+        if (row < 17 && column > 0) {
+          starAssignToQ(parseInt(row) + 1 + "," + (parseInt(column) - 1), current, 14, pathQueue);
+        }
+        if (column > 0) {
+          starAssignToQ(row + "," + (parseInt(column) - 1), current, 10, pathQueue);
+        }
+
+        // console.log(
+        //   nodesArr[lowestCostKey.split(",")[0]][lowestCostKey.split(",")[1]],
+        //   pathQueue[lowestCostKey].gCost,
+        //   pathQueue[lowestCostKey].hCost,
+        //   pathQueue[lowestCostKey].totalCost
+        // );
+
+        visited[lowestCostKey] = pathQueue[lowestCostKey];
+        delete pathQueue[lowestCostKey];
+
+        lowestCostKey = Object.keys(pathQueue)[0];
+        for (let i in pathQueue) {
+          if (pathQueue[i].totalCost < pathQueue[lowestCostKey].totalCost) {
+            lowestCostKey = i;
+          }
+        }
+        if (Object.keys(pathQueue).length === 0) {
+          alert("NO PATH TO THE END NODE!");
+          isNoPath = true;
+          isProcessDone = true;
+          postProcess();
+          return;
+        }
+
+        mainOperation();
+      }
+    }, 10);
+  };
+  mainOperation();
+
+  let currentCoord = endNode.getAttribute("coord");
+
+  const revPath = () => {
+    while (1) {
+      pathArr.push(currentCoord);
+
+      if (currentCoord === startNode.getAttribute("coord")) {
+        pathArr.reverse();
+        drawPath(currentCoord);
+        break;
+      }
+      currentCoord = visited[currentCoord].from;
+    }
+  };
+};
+
 const drawPath = (currentCoord) => {
   setTimeout(() => {
     const [row, column] = pathArr.shift().split(",");
@@ -445,7 +602,6 @@ const drawPath = (currentCoord) => {
         path.push(currentNode);
       }
 
-      // currentCoord = visited[currentCoord].from;
       drawPath(currentCoord);
     } else {
       isProcessDone = true;
@@ -459,7 +615,7 @@ const drawPath = (currentCoord) => {
   #############################################################
 */
 
-btnStart.onclick = () => {
+btnStart.onclick = async () => {
   btnStart.setAttribute("disabled", "");
   isWall = false;
   isRemoveWall = false;
@@ -472,13 +628,17 @@ btnStart.onclick = () => {
   switch (algo.value) {
     case "di": {
       startDijkstra();
+      // dis(nodesArr, startNode, endNode, isProcessDone);
+      break;
+    }
+    case "as": {
+      startAStar();
       break;
     }
     case "bf": {
       startBF();
       break;
     }
-
     default: {
       break;
     }
@@ -546,9 +706,22 @@ startProgram();
 */
 
 const getAlgoInstant = () => {
+  for (let coord in visited) {
+    const [row, column] = coord.split(",");
+    nodesArr[row][column].classList.remove("visited");
+  }
+
+  for (let node of path) {
+    node.classList.remove("path");
+  }
+
   switch (algo.value) {
     case "di": {
       startInstantDijkstra();
+      break;
+    }
+    case "as": {
+      startInstantAStar();
       break;
     }
     case "bf": {
@@ -633,15 +806,6 @@ const postProcess = () => {
 };
 
 const startInstantDijkstra = () => {
-  for (let coord in visited) {
-    const [row, column] = coord.split(",");
-    nodesArr[row][column].classList.remove("visited");
-  }
-
-  for (let node of path) {
-    node.classList.remove("path");
-  }
-
   isProcessDone = false;
   let pathQueue = {};
   const startObj = {
@@ -698,7 +862,7 @@ const startInstantDijkstra = () => {
     delete pathQueue[lowestCostKey];
 
     lowestCostKey = Object.keys(pathQueue)[0];
-    for (i in pathQueue) {
+    for (let i in pathQueue) {
       if (pathQueue[i].gCost < pathQueue[lowestCostKey].gCost) {
         lowestCostKey = i;
       }
@@ -735,20 +899,10 @@ const startInstantDijkstra = () => {
 };
 
 const startInstantBF = () => {
-  for (let coord in visited) {
-    const [row, column] = coord.split(",");
-    nodesArr[row][column].classList.remove("visited");
-  }
-
-  for (let node of path) {
-    node.classList.remove("path");
-  }
-
   isProcessDone = false;
   let visitedArr = [];
   let loopCount = [];
   visited = {};
-  // let prevNode = startNode.getAttribute("coord");
 
   let [row, column] = startNode.getAttribute("coord").split(",");
 
@@ -921,5 +1075,109 @@ const startInstantBF = () => {
       currentNode.classList.add("path");
     }
     currentCoord = pathArr.shift();
+  }
+};
+
+const startInstantAStar = () => {
+  const [endRow, endCol] = endNode.getAttribute("coord").split(",");
+  const [startRow, startCol] = startNode.getAttribute("coord").split(",");
+
+  const hCost = hCostCompute(startRow, startCol, endRow, endCol);
+
+  let pathQueue = {};
+  const startObj = {
+    gCost: 0,
+    hCost: hCost,
+    totalCost: 0,
+    computeTotal: function () {
+      this.totalCost = this.gCost + this.hCost;
+    },
+    coord: startNode.getAttribute("coord"),
+    from: startNode.getAttribute("coord"),
+  };
+  startObj.computeTotal();
+
+  pathQueue[startNode.getAttribute("coord")] = startObj;
+  visited = {};
+  let lowestCostKey = startNode.getAttribute("coord");
+
+  while (1) {
+    let current = pathQueue[lowestCostKey];
+    let [row, column] = lowestCostKey.split(",");
+
+    if (nodesArr[row][column] === endNode) {
+      visited[lowestCostKey] = current;
+      break;
+    }
+    if (nodesArr[row][column] !== startNode) {
+      nodesArr[row][column].classList.add("visited");
+    }
+
+    /*
+        clockwise checking of neighbor
+       */
+    if (row > 0 && column > 0) {
+      starAssignToQ(parseInt(row) - 1 + "," + (parseInt(column) - 1), current, 14, pathQueue);
+    }
+    if (row > 0) {
+      starAssignToQ(parseInt(row) - 1 + "," + column, current, 10, pathQueue);
+    }
+    if (row > 0 && column < 39) {
+      starAssignToQ(parseInt(row) - 1 + "," + (parseInt(column) + 1), current, 14, pathQueue);
+    }
+    if (column < 39) {
+      starAssignToQ(row + "," + (parseInt(column) + 1), current, 10, pathQueue);
+    }
+    if (row < 17 && column < 39) {
+      starAssignToQ(parseInt(row) + 1 + "," + (parseInt(column) + 1), current, 14, pathQueue);
+    }
+    if (row < 17) {
+      starAssignToQ(parseInt(row) + 1 + "," + column, current, 10, pathQueue);
+    }
+    if (row < 17 && column > 0) {
+      starAssignToQ(parseInt(row) + 1 + "," + (parseInt(column) - 1), current, 14, pathQueue);
+    }
+    if (column > 0) {
+      starAssignToQ(row + "," + (parseInt(column) - 1), current, 10, pathQueue);
+    }
+
+    visited[lowestCostKey] = pathQueue[lowestCostKey];
+    delete pathQueue[lowestCostKey];
+
+    lowestCostKey = Object.keys(pathQueue)[0];
+    for (let i in pathQueue) {
+      if (pathQueue[i].totalCost < pathQueue[lowestCostKey].totalCost) {
+        lowestCostKey = i;
+      }
+    }
+    if (Object.keys(pathQueue).length === 0) {
+      alert("NO PATH TO THE END NODE!");
+      isNoPath = true;
+      isProcessDone = true;
+      postProcess();
+      return;
+    }
+  }
+
+  if (isNoPath) {
+    isNoPath = false;
+    return;
+  }
+
+  let currentCoord = endNode.getAttribute("coord");
+
+  while (1) {
+    const [row, column] = currentCoord.split(",");
+    const currentNode = nodesArr[row][column];
+
+    if (currentNode === startNode) {
+      isProcessDone = true;
+      break;
+    }
+    if (currentNode !== startNode && currentNode !== endNode) {
+      path.push(currentNode);
+      currentNode.classList.add("path");
+    }
+    currentCoord = visited[currentCoord].from;
   }
 };
