@@ -115,13 +115,11 @@ const startBF = () => {
 
         visitedArr.push(currentCoord);
         loopCount.push([currentCoord, count]);
-        // prevNode = currentCoord;
 
         if (startNode !== node) {
           node.classList.add("visited");
           visited[node.getAttribute("coord")] = {};
         }
-        // pathQueue.push(startNode.getAttribute("coord"));
 
         let [top, bottom, left, right] = [null, null, null, null];
 
@@ -267,6 +265,95 @@ const startBF = () => {
     drawPath(pathArr[0]);
   };
 };
+
+/*########################################################## DEPTH FIRST  #################################################################*/
+const startDF = () => {
+  let visitedArr = [];
+  visited = {};
+
+  let pathStack = [];
+  pathStack.push(startNode.getAttribute("coord"));
+
+  const iter = () => {
+    setTimeout(() => {
+      const currentCoord = pathStack.pop();
+      const [row, column] = currentCoord.split(",");
+      const node = nodesArr[row][column];
+
+      if (node !== endNode) {
+        visitedArr.push(currentCoord);
+
+        if (node !== startNode) {
+          nodesArr[row][column].classList.add("visited");
+          pathArr.push(currentCoord);
+          visited[node.getAttribute("coord")] = {};
+        }
+
+        let [top, bottom, left, right] = [null, null, null, null];
+        if (row > 0) {
+          top = parseInt(row) - 1 + "," + column;
+        }
+        if (row < 17) {
+          bottom = parseInt(row) + 1 + "," + column;
+        }
+        if (column > 0) {
+          left = row + "," + (parseInt(column) - 1);
+        }
+        if (column < 39) {
+          right = row + "," + (parseInt(column) + 1);
+        }
+
+        if (
+          left !== null &&
+          !visitedArr.includes(left) &&
+          !nodesArr[left.split(",")[0]][left.split(",")[1]].classList.contains("wall")
+        ) {
+          pathStack.push(left);
+        }
+
+        if (
+          bottom !== null &&
+          !visitedArr.includes(bottom) &&
+          !nodesArr[bottom.split(",")[0]][bottom.split(",")[1]].classList.contains("wall")
+        ) {
+          pathStack.push(bottom);
+        }
+
+        if (
+          right !== null &&
+          !visitedArr.includes(right) &&
+          !nodesArr[right.split(",")[0]][right.split(",")[1]].classList.contains("wall")
+        ) {
+          pathStack.push(right);
+        }
+        if (
+          top !== null &&
+          !visitedArr.includes(top) &&
+          !nodesArr[top.split(",")[0]][top.split(",")[1]].classList.contains("wall")
+        ) {
+          pathStack.push(top);
+        }
+
+        if (pathStack.length === 0) {
+          alert("NO PATH TO THE END NODE!");
+          isNoPath = true;
+          isProcessDone = true;
+          postProcess();
+          return;
+        }
+
+        iter();
+      } else {
+        pathArr.push(endNode.getAttribute("coord"));
+        drawPath(pathArr[0]);
+
+        return;
+      }
+    }, 5);
+  };
+  iter();
+};
+
 /*########################################################## DIJKSTRA'S ALGO  #################################################################*/
 
 /*Assigns the neighbors to the queue*/
@@ -639,6 +726,10 @@ btnStart.onclick = async () => {
       startBF();
       break;
     }
+    case "df": {
+      startDF();
+      break;
+    }
     default: {
       break;
     }
@@ -726,6 +817,10 @@ const getAlgoInstant = () => {
     }
     case "bf": {
       startInstantBF();
+      break;
+    }
+    case "df": {
+      startInstantDF();
       break;
     }
 
@@ -1067,6 +1162,106 @@ const startInstantBF = () => {
     const currentNode = nodesArr[row][column];
 
     if (currentNode === startNode) {
+      isProcessDone = true;
+      break;
+    }
+    if (currentNode !== startNode && currentNode !== endNode) {
+      path.push(currentNode);
+      currentNode.classList.add("path");
+    }
+    currentCoord = pathArr.shift();
+  }
+};
+
+const startInstantDF = () => {
+  isProcessDone = false;
+  pathArr = [];
+
+  let visitedArr = [];
+  visited = {};
+
+  let pathStack = [];
+  pathStack.push(startNode.getAttribute("coord"));
+
+  while (1) {
+    const currentCoord = pathStack.pop();
+    const [row, column] = currentCoord.split(",");
+    const node = nodesArr[row][column];
+
+    if (node === endNode) {
+      pathArr.push(currentCoord);
+      break;
+    }
+    visitedArr.push(currentCoord);
+    if (node !== startNode) {
+      pathArr.push(currentCoord);
+
+      nodesArr[row][column].classList.add("visited");
+      visited[node.getAttribute("coord")] = {};
+    }
+
+    let [top, bottom, left, right] = [null, null, null, null];
+    if (row > 0) {
+      top = parseInt(row) - 1 + "," + column;
+    }
+    if (row < 17) {
+      bottom = parseInt(row) + 1 + "," + column;
+    }
+    if (column > 0) {
+      left = row + "," + (parseInt(column) - 1);
+    }
+    if (column < 39) {
+      right = row + "," + (parseInt(column) + 1);
+    }
+
+    if (
+      left !== null &&
+      !visitedArr.includes(left) &&
+      !nodesArr[left.split(",")[0]][left.split(",")[1]].classList.contains("wall")
+    ) {
+      pathStack.push(left);
+    }
+
+    if (
+      bottom !== null &&
+      !visitedArr.includes(bottom) &&
+      !nodesArr[bottom.split(",")[0]][bottom.split(",")[1]].classList.contains("wall")
+    ) {
+      pathStack.push(bottom);
+    }
+
+    if (
+      right !== null &&
+      !visitedArr.includes(right) &&
+      !nodesArr[right.split(",")[0]][right.split(",")[1]].classList.contains("wall")
+    ) {
+      pathStack.push(right);
+    }
+    if (top !== null && !visitedArr.includes(top) && !nodesArr[top.split(",")[0]][top.split(",")[1]].classList.contains("wall")) {
+      pathStack.push(top);
+    }
+
+    if (pathStack.length === 0) {
+      alert("NO PATH TO THE END NODE!");
+      isNoPath = true;
+      isProcessDone = true;
+      postProcess();
+      return;
+    }
+  }
+
+  if (isNoPath) {
+    isNoPath = false;
+    return;
+  }
+
+  let currentCoord = pathArr.shift();
+
+  while (1) {
+    const [row, column] = currentCoord.split(",");
+    const currentNode = nodesArr[row][column];
+
+    if (currentNode === endNode) {
       isProcessDone = true;
       break;
     }
