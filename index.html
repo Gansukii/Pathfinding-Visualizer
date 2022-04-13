@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg">
 
 
         <div class="collapse navbar-collapse ">
@@ -48,18 +48,35 @@
             </div>
         </div>
     </nav>
-    <div class="mt-4 text-center w-100 txtInfo" id="txtInfo">Select a <b id="txtSelect">start node</b></div>
-    <div class="mt-4 text-center w-100 txtInfo d-none" id="txtPost">Start and end nodes are now draggable to see the
+    <div class="my-4 text-center w-100 txtInfo" id="txtInfo">Select a <b id="txtSelect">start node</b>
+    </div>
+    <div class="my-4 text-center w-100 txtInfo d-none" id="txtPost">Start and end nodes are now draggable to see the
         shortest
         path instantly.</div>
+    <div>
 
+        <div class="row mx-auto d-flex legendContainer">
+            <div class="legend">
+                <div class="legendBox1"></div><span>Start Node</span>
+            </div>
+            <div class="legend">
+                <div class="legendBox2"></div><span>End Node</span>
+            </div>
+            <div class="legend">
+                <div class="legendBox3"></div><span>Visited</span>
+            </div>
+            <div class="legend">
+                <div class="legendBox4"></div><span>Path</span>
+            </div>
+        </div>
+
+
+
+    </div>
     <div class="mt-2 mb-4 d-flex p-0 justify-content-center mx-auto nodeContainer " id="nodeContainer">
 
     </div>
-    <!-- <div><button type="button" class="btn btn-danger" id="btnClear">Clear selections</button></div> -->
-    <!-- <div><button type="button" class="btn btn-primary" id="btnStart" disabled>Start!</button></div> -->
-    <!-- <div><button type="button" class="btn btn-dark" id="btnWall" disabled>Add Wall</button></div> -->
-    <!-- <div><button type="button" class="btn btn-info" id="btnRemoveWall" disabled>Remove Wall</button></div> -->
+
 
     <script src="./main.js"></script>
 

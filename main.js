@@ -35,7 +35,7 @@ const createNode = (row, col) => {
       startSelected = true;
       lastSelected = false;
     } else if (!lastSelected && startSelected) {
-      txtInfo.classList.add("d-none");
+      txtInfo.classList.add("invisible");
       div.classList.add("end");
       endNode = div;
       btnStart.removeAttribute("disabled");
@@ -703,6 +703,14 @@ const drawPath = (currentCoord) => {
 */
 
 btnStart.onclick = async () => {
+  for (let coord in visited) {
+    const [row, column] = coord.split(",");
+    nodesArr[row][column].classList.remove("visited");
+  }
+
+  for (let node of path) {
+    node.classList.remove("path");
+  }
   btnStart.setAttribute("disabled", "");
   isWall = false;
   isRemoveWall = false;
@@ -731,6 +739,7 @@ btnStart.onclick = async () => {
       break;
     }
     default: {
+      postProcess();
       break;
     }
   }
@@ -780,6 +789,7 @@ btnClear.onclick = () => {
   btnRemoveWall.textContent = "Remove Wall";
 
   txtInfo.classList.remove("d-none");
+  txtInfo.classList.remove("invisible");
   txtPost.classList.add("d-none");
 
   while (nodeContainer.firstChild) {
@@ -831,6 +841,7 @@ const getAlgoInstant = () => {
 };
 
 const postProcess = () => {
+  btnStart.removeAttribute("disabled");
   txtPost.classList.remove("d-none");
   txtInfo.classList.add("d-none");
   btnWall.removeAttribute("disabled");

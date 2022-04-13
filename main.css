@@ -1,37 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-.btn{
+*{
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+}
+
+label{
+  font-weight: 600;
+}
+
+.btn {
   cursor: pointer;
 }
 
-.btn:hover{
-  box-shadow: 0px 1px 8px 0px rgba(0,0,0,0.75);
--webkit-box-shadow: 0px 1px 8px 0px rgba(0,0,0,0.75);
--moz-box-shadow: 0px 1px 8px 0px rgba(0,0,0,0.75);
+.btn:hover {
+  box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.75);
 }
 
-#btnWall{
+#btnWall {
   background-color: #000;
   color: #fff;
 }
 
-#btnRemoveWall{
+#btnRemoveWall {
   border: 1px solid #000;
+  color: #000;
 }
 
-.txtInfo{
- font-size: 20px;
+.txtInfo,#txtSelect {
+  font-size: 20px;
 }
 
 .nodeContainer {
-  width: 1400px;
-  height: 630px;
+  width: 1200px;
+  height: 540px;
   flex-wrap: wrap;
   outline: 2px solid #000;
 }
 .node {
   margin: 0;
-  min-width: 35px;
-  height: 35px;
+  min-width: 30px;
+  height: 30px;
   border: 1px solid #000;
   display: flex;
   cursor: pointer;
@@ -70,10 +81,55 @@
   background-color: #029090;
 }
 
-.wall{
-  background-color:#000;
+.wall {
+  background-color: #000;
 }
 
 .wall:hover {
   background-color: #000;
 }
+
+.legendBox1 {
+  background-color: #00ff00;
+}
+.legendBox2 {
+  background-color: #ff4500;
+}
+.legendBox3 {
+  background-color: aqua;
+}
+.legendBox4 {
+  background-color: #029090;
+}
+
+.legendContainer{
+  width: 1200px;
+}
+
+.legend{
+  display: flex;
+  margin-right: 20px;
+  gap: 8px;
+  align-items: center;
+}
+
+.legend div {
+  width: 20px;
+  height: 20px;
+}
+
+.legend span {
+ font-size: 14px;
+}
+
+.navbar{
+  background-color: rgb(175, 175, 175);
+  box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.75);
+-webkit-box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.75);
+}
+
+
+/* .start{
+  background-color: #00ff00;
+} */
