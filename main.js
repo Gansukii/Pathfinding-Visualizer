@@ -7,6 +7,7 @@ const btnRemoveWall = document.getElementById("btnRemoveWall");
 const txtInfo = document.getElementById("txtInfo");
 const txtPost = document.getElementById("txtPost");
 const txtSelect = document.getElementById("txtSelect");
+const txtDF = document.getElementById("txtDF");
 let isWall = false;
 let isRemoveWall = false;
 let isMouseDown = false;
@@ -711,6 +712,7 @@ btnStart.onclick = async () => {
   for (let node of path) {
     node.classList.remove("path");
   }
+  algo.setAttribute("disabled", "");
   btnStart.setAttribute("disabled", "");
   isWall = false;
   isRemoveWall = false;
@@ -719,6 +721,7 @@ btnStart.onclick = async () => {
   btnWall.setAttribute("disabled", "");
   btnRemoveWall.setAttribute("disabled", "");
   btnClear.setAttribute("disabled", "");
+  txtDF.classList.add("d-none");
 
   switch (algo.value) {
     case "di": {
@@ -791,6 +794,7 @@ btnClear.onclick = () => {
   txtInfo.classList.remove("d-none");
   txtInfo.classList.remove("invisible");
   txtPost.classList.add("d-none");
+  txtDF.classList.add("d-none");
 
   while (nodeContainer.firstChild) {
     nodeContainer.removeChild(nodeContainer.firstChild);
@@ -841,6 +845,7 @@ const getAlgoInstant = () => {
 };
 
 const postProcess = () => {
+  algo.removeAttribute("disabled");
   btnStart.removeAttribute("disabled");
   txtPost.classList.remove("d-none");
   txtInfo.classList.add("d-none");
@@ -856,6 +861,10 @@ const postProcess = () => {
   endNode.onmousedown = () => {
     isEndDown = true;
   };
+
+  if (algo.value === "df") {
+    txtDF.classList.remove("d-none");
+  }
 
   for (let node of nodes) {
     node.onmouseup = () => {

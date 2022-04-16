@@ -25,7 +25,7 @@
                         <select class="form-control" id="algo">
                             <option value="di" selected>Dijkstra's Algorithm</option>
                             <option value="as">A Star (A*)</option>
-                            <option>3</option>
+                            <!-- <option></option> -->
                             <option value="bf">Breadth First Search</option>
                             <option value="df">Depth First Search</option>
                         </select>
@@ -55,6 +55,7 @@
         path instantly.</div>
     <div>
 
+
         <div class="row mx-auto d-flex legendContainer">
             <div class="legend">
                 <div class="legendBox1"></div><span>Start Node</span>
@@ -67,6 +68,15 @@
             </div>
             <div class="legend">
                 <div class="legendBox4"></div><span>Path</span>
+            </div>
+            <div class="ml-auto my-0 py-0 d-flex">
+                <div class=" d-none my-0 py-0 text-info" id="txtDF">
+                    * Depth First Search does not guarantee
+                    a shortest path.
+                </div>
+            </div>
+            <div>
+
             </div>
         </div>
 
