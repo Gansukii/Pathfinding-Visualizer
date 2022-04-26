@@ -3,7 +3,7 @@
 
 link for the Github page -> [Pathfinder (gansukii.github.io)](https://gansukii.github.io/Pathfinding-Visualizer/)
 
-This is a basic pathfinding algorithm project just to show how the pathfinding algorithms work and the shortest path from two different nodes. After the animation, both start and end nodes can be dragged around to find the shortest path between them instantly, without the animation.
+This is a basic pathfinding algorithm project just to show how the pathfinding algorithms work and the shortest path from two different nodes. Walls can be added to force the algortihm to find other routes toward the end node. After the animation, both start and end nodes can be dragged around to find the shortest path between them instantly, without the animation.
 
 The source code is a mess as it is just a personal project, but it might be refactored in the future to have a cleaner code for other developers.
 
